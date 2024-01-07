@@ -5,8 +5,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import org.lwjgl.glfw.GLFW;
 
 public class NickBypasser implements ClientModInitializer {
@@ -24,10 +24,12 @@ public class NickBypasser implements ClientModInitializer {
         ));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (keyBinding.wasPressed()) {
-                MutableText text = Text.literal((Values.SHOW_REAL_NAMES ? "No longer" : "Now") +  " showing real igns above people's heads!");
-                text.setStyle(text.getStyle().withColor(0x227C9D));
-
-                client.player.sendMessage(text, false);
+                if (client.player == null) return;
+                client.player.sendMessage(
+                        Text.literal((Values.SHOW_REAL_NAMES ? "No longer" : "Now") +
+                                " showing real igns above people's heads!")
+                                .styled(style -> style.withColor(TextColor.fromRgb(0x227C9D))),
+                        false);
                 Values.SHOW_REAL_NAMES = !Values.SHOW_REAL_NAMES;
             }
         });
